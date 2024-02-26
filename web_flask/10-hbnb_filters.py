@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 
 @app.route('/hbnb_filters', strict_slashes=False)
-def filters():
+def filter_s():
     """display a HTML page like 6-index.html from static"""
     states = storage.all("State").values()
     amenities = storage.all("Amenity").values()
@@ -19,7 +19,7 @@ def filters():
 
 
 @app.teardown_appcontext
-def teardown_db(exception):
+def teardown__db(exception):
     """closes the storage on teardown"""
     storage.close()
 
