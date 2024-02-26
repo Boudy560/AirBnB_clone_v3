@@ -1,24 +1,25 @@
 #!/usr/bin/python3
-"""
-Fabric script generates .tgz archive of all in web_static/ using func 'do_pack'
-Usage: fab -f 1-pack_web_static.py do_pack
+""" A Fabric script that generates a .tgz """
 
-All files in the folder web_static must be added to the final archive
-All archives must be stored in the folder 'versions' (create folder if none)
-Create archive "web_static_<year><month><day><hour><minute><second>.tgz"
-The function do_pack must return the archive path, else return None
-"""
+from datetime import datetime
 from fabric.api import local
-from time import strftime
+import os.path
 
 
 def do_pack():
-    """generate .tgz archive of web_static/ folder"""
-    timenow = strftime("%Y%M%d%H%M%S")
-    try:
-        local("mkdir -p versions")
-        filename = "versions/web_static_{}.tgz".format(timenow)
-        local("tar -cvzf {} web_static/".format(filename))
-        return filename
-    except:
+    """Archives the static files."""
+    cur_time = datetime.now()
+    output = "versions/web_static_{}{}{}{}{}{}.tgz".format(
+        cur_time.year,
+        cur_time.month,
+        cur_time.day,
+        cur_time.hour,
+        cur_time.minute,
+        cur_time.second
+    )
+    if os.path.isdir("versions") is False:
+        if local("mkdir -p versions").failed is True:
+            return None
+    if local("tar -cvzf {} web_static".format(output)).failed is True:
         return None
+    return output
